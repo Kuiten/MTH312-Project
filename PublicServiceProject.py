@@ -1,7 +1,22 @@
 import math
+import random
 import numpy as np
 import sympy as sp
 
+d = 0
+#print strengths and weaknesses of caesar cipher
+def caesar_info():
+    print("Strengths:")
+    print("Better than no encryption\n")
+    print("-------------------------------\n")
+    print("Weaknesses:")    
+    print("All letters are shifted by the same amount, once you crack one youve cracked all of them")
+    print("Susceptible to frequency analysis that doesnt take very long to crack")
+    print("A single letter that stands alone in the encrypted message is either A or I")
+#print strengths and weaknesses of affine shifts
+def affine_info():
+    caesar_info()
+    print("If not careful a letter may not end up changing")
 #function to encrypt using caesar cipher
 def encrypt_caesar(m):
     alphabet = "abcdefghijklmnopqrstuvwxyz"
@@ -16,8 +31,7 @@ def encrypt_caesar(m):
         message += alphabet[j]
     print("\nRemoved spaces for ease of encryption")
     print(f"Encrypted message using caesar cipher: {message}\n")
-    #FIXME: explain strengths and weaknesses of this cipher
-
+    caesar_info()
 #function to encrypt using affine shift
 def encrypt_affine(m, mshift, ashift):
     alphabet = "abcdefghijklmnopqrstuvwxyz"
@@ -37,13 +51,26 @@ def encrypt_affine(m, mshift, ashift):
     print(f"and an additive shift of {ashift}")
     print("Removed spaces for ease of encryption")
     print(f"Encrypted message using affine shifts: {message}\n")
-    #FIXME: explain strengths and weaknesses of this cipher
+    affine_info()
 
 def encrypt_vegenere(m):
     a = "placeholder"
 
 def encrypt_RSA(m):
-    a = "placeholder"
+    p = 32771
+    q = 62017
+    m = int(m)
+    mod = p * q
+    phi = (p-1)*(q-1)
+    d = random.randint(2, phi-2)
+    while math.gcd(d,phi) != 1:
+        d = random.randint(2, phi-2)
+    #find the value of e(mult inverse of d mod phi)
+    e = int(sp.invert(d, phi))
+    n = pow(m, e, mod)
+    print(f"Encrypted using value of e = {e}")
+    print(f"Encrypted using RSA with this programs default primes(p and q): {n}\n")
+    #FIXME: strengths and weaknesses.
 
 def encrypt_hill(m):
     alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?'
@@ -76,8 +103,7 @@ def decrypt_caesar(m):
         message += alphabet[j]
     print("\nRemoved spaces for ease of decryption")
     print(f"Decrypted message using caesar cipher: {message}\n")
-    #FIXME: explain strengths and weaknesses of this cipher
-
+    caesar_info()
 #function to decrypt affine shifts
 def decrypt_affine(m, mshift, ashift):
     alphabet = "abcdefghijklmnopqrstuvwxyz"
@@ -96,14 +122,21 @@ def decrypt_affine(m, mshift, ashift):
         message += alphabet[j]
     print("\nRemoved spaces for ease of decryption")
     print(f"Decrypted message using affine shift of *{mshift} +{ashift}: {message}\n")
-    #FIXME: explain strengths and weaknesses of this cipher
+    affine_info()
 
 def decrypt_vegenere(m):
     a = "placeholder"
 
-def decrypt_RSA(m):
-    a = "placeholder"
-
+def decrypt_RSA(m, e):
+    p = 32771
+    q = 62017
+    m = int(m)
+    mod = p * q
+    phi = (p-1)*(q-1)
+    d = int(sp.invert(e, phi))
+    c = pow(m, d, mod)
+    print(f"Decrypted using RSA with this programs default primes(p and q): {c}\n")
+    #FIXME: strengths and weaknesses
 def decrypt_hill(m, a, b, c, d):
     alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?'
     matrix = sp.Matrix([[a, b], [c, d]])
@@ -128,7 +161,7 @@ def decrypt_hill(m, a, b, c, d):
 def main():
     while True:
         #Get if the user would like to encrypt(e) or decrypt(d)
-        encrypt_or_decrypt = input("Type 'e' to encrypt or 'd' to decrypt or 'q' to quit: ")
+        encrypt_or_decrypt = input("\nType 'e' to encrypt or 'd' to decrypt or 'q' to quit: ")
         #If neither are given return an error
         if(encrypt_or_decrypt != "e" and encrypt_or_decrypt != "d"):
             if encrypt_or_decrypt == "q":
@@ -141,9 +174,9 @@ def main():
         cipher = int(input("Type '1' for caesar cipher, '2' for affine shift '3' for Vegenere cipher '4' for RSA '5' for hill cipher: "))
         #get the users message tto be encrypted or decrypted
         if encrypt_or_decrypt == "e":
-            message = input("Please enter your message to be encrypted: ")
+            message = input("Please enter your message(integer for RSA) to be encrypted: ")
         if encrypt_or_decrypt == "d":
-            message = input("Please enter your message to be decrypted: ")
+            message = input("Please enter your message(integer for RSA) to be decrypted: ")
         #Depending on user input call appropriate functon for the requested action
         #encrypt caesar
         if encrypt_or_decrypt == "e" and cipher == 1:
@@ -175,7 +208,8 @@ def main():
             decrypt_vegenere(message)
         #decrypt RSA
         elif encrypt_or_decrypt == "d" and cipher == 4:
-            decrypt_RSA(message)
+            e_val = int(input("Please enter the value of e used in encryption: "))
+            decrypt_RSA(message, e_val)
         #decrypt hill
         elif encrypt_or_decrypt == "d" and cipher == 5:
             a = int(input("enter the first value of the matrix used: "))
