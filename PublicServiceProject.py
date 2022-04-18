@@ -3,7 +3,6 @@ import random
 import numpy as np
 import sympy as sp
 
-d = 0
 #print strengths and weaknesses of caesar cipher
 def caesar_info():
     print("Strengths:")
@@ -17,6 +16,27 @@ def caesar_info():
 def affine_info():
     caesar_info()
     print("If not careful a letter may not end up changing")
+#print strengths and weaknesses of RSA encryption
+def RSA_info():
+    print("Strengths:")
+    print("Fairly simple to implement")
+    print("Rather secure as cracking RSA requires significant computing power/math knowledge")
+    print("Frequency analysis not efficient for cracking\n")
+    print("-------------------------------\n")
+    print("Weaknesses:")
+    print("if the two primes chosen are too small RSA can be broken easily")
+    print("the larger primes can result in larger computational times")
+    print("If private key is lost, all messaged encrypted using it cannot be decrypted")
+#print strengths and weaknesses of hill ciphers
+def hill_info():
+    print("Strengths:")
+    print("Larger alphabet results in more combinations")
+    print("Can have proper grammar")
+    print("Cannot be cracked using freqeuncy analysis on the individual letters\n")
+    print("-------------------------------\n")
+    print("Weaknesses:")
+    print("Alphabet cant be even in length")
+    print("boils down to a simple substituion cipher applied to digraphs")
 #function to encrypt using caesar cipher
 def encrypt_caesar(m):
     alphabet = "abcdefghijklmnopqrstuvwxyz"
@@ -55,23 +75,19 @@ def encrypt_affine(m, mshift, ashift):
 
 def encrypt_vegenere(m):
     a = "placeholder"
-
-def encrypt_RSA(m):
+#function to encrypt using RSA
+def encrypt_RSA(m, d):
     p = 32771
     q = 62017
     m = int(m)
     mod = p * q
     phi = (p-1)*(q-1)
-    d = random.randint(2, phi-2)
-    while math.gcd(d,phi) != 1:
-        d = random.randint(2, phi-2)
     #find the value of e(mult inverse of d mod phi)
     e = int(sp.invert(d, phi))
     n = pow(m, e, mod)
-    print(f"Encrypted using value of e = {e}")
-    print(f"Encrypted using RSA with this programs default primes(p and q): {n}\n")
-    #FIXME: strengths and weaknesses.
-
+    print(f"\nEncrypted using RSA with this programs default primes(p and q): {n}\n")
+    RSA_info()
+#function to encrypt using hill ciphers
 def encrypt_hill(m):
     alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?'
     matrix = sp.Matrix([[3, 7], [9, 5]])
@@ -88,7 +104,7 @@ def encrypt_hill(m):
         encrypted_message += alphabet[i]
     print(f"\nencrypted using: {matrix}")
     print(f"Encrypted message using hill cipher: {encrypted_message}\n")
-    #FIXME: explain strengths and weaknesses
+    hill_info()
 #function to decrypt caesar cipher
 def decrypt_caesar(m):
     alphabet = "abcdefghijklmnopqrstuvwxyz"
@@ -126,17 +142,16 @@ def decrypt_affine(m, mshift, ashift):
 
 def decrypt_vegenere(m):
     a = "placeholder"
-
-def decrypt_RSA(m, e):
+#function to decrypt using RSA
+def decrypt_RSA(m,d):
     p = 32771
     q = 62017
     m = int(m)
     mod = p * q
-    phi = (p-1)*(q-1)
-    d = int(sp.invert(e, phi))
     c = pow(m, d, mod)
-    print(f"Decrypted using RSA with this programs default primes(p and q): {c}\n")
-    #FIXME: strengths and weaknesses
+    print(f"\nDecrypted using RSA with this programs default primes(p and q): {c}\n")
+    RSA_info()
+#function to decrypt using hill ciphers
 def decrypt_hill(m, a, b, c, d):
     alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?'
     matrix = sp.Matrix([[a, b], [c, d]])
@@ -157,8 +172,17 @@ def decrypt_hill(m, a, b, c, d):
         decrypted_message += alphabet[i]
     print(f"\nDecrypted using: Inverse {inverse_matrix}")
     print(f"Decrypted message using hill cipher: {decrypted_message}\n")
-
+    hill_info()
+#main loop of the program
 def main():
+    #calculate d key for RSA for this run of the program
+    rsa_p = 32771
+    rsa_q = 62017
+    rsa_phi = (rsa_p-1)*(rsa_q-1)
+    rsa_d = random.randint(2, rsa_phi-2)
+    while math.gcd(rsa_d,rsa_phi) != 1:
+        rsa_d = random.randint(2, rsa_phi-2)
+    #Continue program until user quits
     while True:
         #Get if the user would like to encrypt(e) or decrypt(d)
         encrypt_or_decrypt = input("\nType 'e' to encrypt or 'd' to decrypt or 'q' to quit: ")
@@ -191,7 +215,7 @@ def main():
             encrypt_vegenere(message)
         #encrypt RSA
         elif encrypt_or_decrypt == "e" and cipher == 4:
-            encrypt_RSA(message)
+            encrypt_RSA(message, rsa_d)
         #encrypt hill
         elif encrypt_or_decrypt == "e" and cipher == 5:
             encrypt_hill(message)
@@ -208,8 +232,7 @@ def main():
             decrypt_vegenere(message)
         #decrypt RSA
         elif encrypt_or_decrypt == "d" and cipher == 4:
-            e_val = int(input("Please enter the value of e used in encryption: "))
-            decrypt_RSA(message, e_val)
+            decrypt_RSA(message, rsa_d)
         #decrypt hill
         elif encrypt_or_decrypt == "d" and cipher == 5:
             a = int(input("enter the first value of the matrix used: "))
