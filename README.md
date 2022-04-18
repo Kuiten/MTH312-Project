@@ -7,4 +7,4 @@ Explains the strengths and weaknesses of each cipher after if encrypts or decryp
 - Then install sympy and numpy using pip install
 
 # To run
-- type "python PublicServiceProject.py
+- type "python PublicServiceProject.py" in a terminal
