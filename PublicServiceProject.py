@@ -3,6 +3,19 @@ import random
 import numpy as np
 import sympy as sp
 
+def printVigenereSquare():
+    alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+                "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+
+    vigenereSquare = []
+
+    for i in range(0, 26):
+        row = [alphabet[(j+i+1) % 26] for j in range(0, 26)]
+        vigenereSquare.append(row)
+
+    for shift in vigenereSquare:
+        print(shift)
+
 #print strengths and weaknesses of caesar cipher
 def caesar_info():
     print("Strengths:")
@@ -37,6 +50,19 @@ def hill_info():
     print("Weaknesses:")
     print("Alphabet cant be even in length")
     print("boils down to a simple substituion cipher applied to digraphs")
+# print strengths and weaknesses of the vigenere cipher
+def vigenere_info():
+    print("Uses a vigenere table to shift each letter in plaintext: ")
+    print(printVigenereSquare())
+    print()
+    print("Strengths:")
+    print("Different letters in the plaintext can be encrypted to the same letter in the cipher")
+    print("Different letters in the cipher can represent the same letter in the plaintext")
+    print("This makes it impervious to normal frequency analysis\n")
+    print("-------------------------------\n")
+    print("Weaknesses:")
+    print("If the same letters are encrypted using the same part of they key, there can be patterns in the key")
+    print("This allows you to figure out the length of the key and do frequency analysis on each letter of the key to crack it")
 #function to encrypt using caesar cipher
 def encrypt_caesar(m):
     alphabet = "abcdefghijklmnopqrstuvwxyz"
@@ -73,8 +99,17 @@ def encrypt_affine(m, mshift, ashift):
     print(f"Encrypted message using affine shifts: {message}\n")
     affine_info()
 
-def encrypt_vegenere(m):
-    a = "placeholder"
+def encrypt_vegenere(message, key):
+    alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+                "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+
+    ciphertext = ""
+    for index, letter in enumerate(message):
+        e = (alphabet.index(letter) + alphabet.index(key[index % len(key)])) % 26
+        ciphertext += alphabet[e]
+
+    print("Your encrypted message is: " + message)
+    return ciphertext
 #function to encrypt using RSA
 def encrypt_RSA(m, d):
     p = 32771
@@ -140,8 +175,15 @@ def decrypt_affine(m, mshift, ashift):
     print(f"Decrypted message using affine shift of *{mshift} +{ashift}: {message}\n")
     affine_info()
 
-def decrypt_vegenere(m):
-    a = "placeholder"
+def decrypt_vegenere(ciphertext, key):
+    alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+                "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+
+    plaintext = ""
+    for index, letter in enumerate(ciphertext):
+        d = (alphabet.index(letter) - alphabet.index(key[index % len(key)])) % 26
+        plaintext += alphabet[d]
+    print("Your original message was: " + plaintext)
 #function to decrypt using RSA
 def decrypt_RSA(m,d):
     p = 32771
@@ -212,7 +254,8 @@ def main():
             encrypt_affine(message, mult_shift, add_shift)
         #encrypt vegenere
         elif encrypt_or_decrypt == "e" and cipher == 3:
-            encrypt_vegenere(message)
+            key = input("Enter a key for the Vigenere Cipher, letters only")
+            encrypt_vegenere(message, key.upper())
         #encrypt RSA
         elif encrypt_or_decrypt == "e" and cipher == 4:
             encrypt_RSA(message, rsa_d)
@@ -229,7 +272,8 @@ def main():
             decrypt_affine(message, mult_shift, add_shift)
         #decrypt vegenere
         elif encrypt_or_decrypt == "d" and cipher == 3:
-            decrypt_vegenere(message)
+            key = input("Enter the key that was used for encryption")
+            decrypt_vegenere(message, key.upper())
         #decrypt RSA
         elif encrypt_or_decrypt == "d" and cipher == 4:
             decrypt_RSA(message, rsa_d)
