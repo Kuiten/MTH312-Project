@@ -100,6 +100,7 @@ def encrypt_affine(m, mshift, ashift):
     affine_info()
 
 def encrypt_vegenere(message, key):
+    vigenere_info()
     alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
                 "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 
@@ -109,6 +110,7 @@ def encrypt_vegenere(message, key):
         ciphertext += alphabet[e]
 
     print("Your encrypted message is: " + ciphertext)
+
 #function to encrypt using RSA
 def encrypt_RSA(m, d):
     p = 32771
@@ -175,6 +177,7 @@ def decrypt_affine(m, mshift, ashift):
     affine_info()
 
 def decrypt_vegenere(ciphertext, key):
+    vigenere_info()
     alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
                 "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 
