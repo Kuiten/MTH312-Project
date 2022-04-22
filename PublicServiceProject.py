@@ -108,8 +108,7 @@ def encrypt_vegenere(message, key):
         e = (alphabet.index(letter) + alphabet.index(key[index % len(key)])) % 26
         ciphertext += alphabet[e]
 
-    print("Your encrypted message is: " + message)
-    return ciphertext
+    print("Your encrypted message is: " + ciphertext)
 #function to encrypt using RSA
 def encrypt_RSA(m, d):
     p = 32771
