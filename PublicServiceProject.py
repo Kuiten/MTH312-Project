@@ -177,7 +177,7 @@ def decrypt_affine(m, mshift, ashift):
     affine_info()
 
 def decrypt_vegenere(ciphertext, key):
-    vigenere_info()
+    #vigenere_info()
     alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
                 "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 
